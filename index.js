@@ -4,24 +4,30 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const dotenv = require("dotenv");
+
+// Load env variables
+dotenv.config();
 
 const Task = require("./modules/TaskSchema");
 const Data = require("./modules/TaskData");
 
 const app = express();
-const PORT = 3011;
-const JWT_SECRET = process.env.JWT_SECRET || "kaifskey";
+
+// Use env values
+const PORT = process.env.PORT || 3011;
+const JWT_SECRET = process.env.JWT_SECRET;
+const MONGO_URI = process.env.MONGO_URI;
+const CLIENT_URL = process.env.CLIENT_URL;
 
 // Middleware
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: CLIENT_URL, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
 // Connect to MongoDB
 mongoose
-  .connect(
-    "mongodb+srv://root:root@cluster0.xsw16w4.mongodb.net/Task?retryWrites=true&w=majority&appName=Cluster0"
-  )
+  .connect(MONGO_URI)
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection failed:", err));
 
